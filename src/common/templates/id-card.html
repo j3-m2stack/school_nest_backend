@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <style>
+    .grid {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .id-card {
+      width: 45%;
+      /* 2 cards per row, adjust for 4-6 per page */
+      border: 1px solid #000;
+      margin: 5px;
+      padding: 10px;
+      font-family: Arial, sans-serif;
+    }
+
+    .photo {
+      width: 60px;
+      height: 60px;
+      background: #eee;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="grid">
+    {{#each students}}
+    <div class="id-card">
+      <img src="{{photo}}" class="photo" />
+      <h4>{{firstName}} {{lastName}}</h4>
+      <p>Class: {{className}} - {{section}}</p>
+      <p>Adm No: {{admissionNo}}</p>
+    </div>
+    {{/each}}
+  </div>
+</body>
+
+</html>
