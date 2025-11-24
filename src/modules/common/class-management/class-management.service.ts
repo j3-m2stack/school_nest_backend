@@ -14,31 +14,41 @@ import { UpdateClassDto } from './dto/update-class-management.dto';
 export class ClassManagementService {
   constructor() {}
 
+  // ------------------------------------------------------
+  // CREATE CLASS WITH SECTIONS + CLASS TEACHER
+  // ------------------------------------------------------
   async create(dto: CreateClassDto) {
-    // Check if class already exists
+    // Check duplicate class name
     const exists = await ClassMst.findOne({ where: { name: dto.name } });
     if (exists) throw new BadRequestException('Class already exists');
 
-    // Create class
-    const newClass = await ClassMst.create({
+    // Create the class
+    const createdClass = await ClassMst.create({
       name: dto.name,
-      description: dto.description,
+      description: dto.description ?? null,
     });
 
-    // Create sections
-    const sectionEntries = dto.sections.map((name) => ({
-      classId: newClass.id,
-      name,
-    }));
-    await Section.bulkCreate(sectionEntries);
+    // Create sections with optional teacher
+    if (dto.sections?.length > 0) {
+      const sectionEntries = dto.sections.map((sec) => ({
+        name: sec.name,
+        classId: createdClass.id,
+        classTeacherId: sec.classTeacherId || null,
+      }));
+
+      await Section.bulkCreate(sectionEntries);
+    }
 
     return {
       statusCode: 201,
-      message: 'Class created successfully',
-      data: newClass,
+      message: 'Class created successfully with section teachers',
+      data: createdClass,
     };
   }
 
+  // ------------------------------------------------------
+  // FIND ALL CLASSES
+  // ------------------------------------------------------
   async findAll(query: any) {
     return paginatedFind({
       model: ClassMst,
@@ -48,30 +58,50 @@ export class ClassManagementService {
     });
   }
 
+  // ------------------------------------------------------
+  // FIND ONE CLASS
+  // ------------------------------------------------------
   async findOne(id: number) {
     const classData = await ClassMst.findOne({
       where: { id },
       include: [Section],
     });
+
     if (!classData) throw new NotFoundException('Class not found');
     return classData;
   }
 
+  // ------------------------------------------------------
+  // UPDATE CLASS + SECTIONS + CLASS TEACHER
+  // ------------------------------------------------------
   async update(id: number, dto: UpdateClassDto) {
     const classData = await this.findOne(id);
 
+    // check for duplicate name
     if (dto.name && dto.name !== classData.name) {
       const exists = await ClassMst.findOne({ where: { name: dto.name } });
       if (exists) throw new BadRequestException('Class name already exists');
     }
 
-    await classData.update({ name: dto.name, description: dto.description });
+    // update class fields
+    await classData.update({
+      name: dto.name,
+      description: dto.description ?? classData.description,
+    });
 
+    // update sections
     if (dto.sections?.length) {
+      // delete old sections
       await Section.destroy({ where: { classId: id } });
 
-      const newSections = dto.sections.map((name) => ({ name, classId: id }));
-      await Section.bulkCreate(newSections);
+      // create new sections with classTeacherId
+      const sectionEntries = dto.sections.map((sec) => ({
+        name: sec.name,
+        classId: id,
+        classTeacherId: sec.classTeacherId || null,
+      }));
+
+      await Section.bulkCreate(sectionEntries);
     }
 
     return {
@@ -81,6 +111,9 @@ export class ClassManagementService {
     };
   }
 
+  // ------------------------------------------------------
+  // DELETE CLASS
+  // ------------------------------------------------------
   async delete(id: number) {
     const classData = await this.findOne(id);
 

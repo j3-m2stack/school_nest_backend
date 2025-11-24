@@ -7,6 +7,7 @@ import {
   BelongsTo,
 } from 'sequelize-typescript';
 import { ClassMst } from './class.model';
+import { User } from 'src/database/models/user.model';
 
 @Table({ tableName: 'sections', timestamps: true })
 export class Section extends Model<Section> {
@@ -19,6 +20,14 @@ export class Section extends Model<Section> {
   @ForeignKey(() => ClassMst)
   @Column({ type: DataType.INTEGER })
   classId: number;
+
+  @ForeignKey(() => User)
+  @Column({ type: DataType.INTEGER, allowNull: true })
+  classTeacherId: number;
+
+  @BelongsTo(() => User)
+  classTeacher: User;
+
 
   @BelongsTo(() => ClassMst)
   class: ClassMst;

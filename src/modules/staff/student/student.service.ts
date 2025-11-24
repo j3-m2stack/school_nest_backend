@@ -169,29 +169,62 @@ export class StudentService {
     };
   }
 
-  async findByClass(classId: number) {
-    // Fetch students linked with StudentAcademicRecord and Class
-    const students = await StudentAcademicRecord.findAll({
-      where: { classId },
-      include: [
-        { model: Student, include: [] }, // include basic student info
-        { model: Section, attributes: ['name'] },
-        { model: ClassMst, attributes: ['name'] },
-      ],
-    });
+async findByClass(classId: number) {
+  const students = await StudentAcademicRecord.findAll({
+    where: { classId },
 
-    if (!students || students.length === 0) {
-      throw new NotFoundException('No students found for this class');
-    }
+    include: [
+      {
+        model: Student,
+        include: [
+          {
+            model: Parent,
+            attributes: ['name', 'relation', 'phone'],
+          },
+        ],
+      },
+      { model: Section, attributes: ['name'] },
+      { model: ClassMst, attributes: ['name'] },
+    ],
+  });
 
-    // Map data for ID card template
-    return students.map((record) => ({
-      firstName: record.student.firstName,
-      lastName: record.student.lastName,
-      photo: record.student.photo || '',
+  if (!students || students.length === 0) {
+    throw new NotFoundException('No students found for this class');
+  }
+
+  return students.map((record) => {
+    const student = record.student;
+
+    const father = student.parents?.find((p) => p.relation?.toLowerCase() === 'father');
+    const mother = student.parents?.find((p) => p.relation?.toLowerCase() === 'mother');
+
+    return {
+      /* ---- Student Basic Info ---- */
+      firstName: student.firstName,
+      lastName: student.lastName,
+      dob: student.dob,
+      gender: student.gender,
+      photo: student.photo || '',
+
+      /* ---- Parents Info ---- */
+      fatherName: father?.name || '',
+      fatherPhone: father?.phone || '',
+      motherName: mother?.name || '',
+      motherPhone: mother?.phone || '',
+
+      /* ---- Class Details ---- */
       className: record.class.name,
       section: record.section.name,
-      admissionNo: record.student.id, // or rollNumber if you want
-    }));
-  }
+
+      /* ---- Other Details ---- */
+      admissionNo: student.id,
+      phone: student.phone,
+      address: student.address,
+
+      /* ---- Auto session ---- */
+      session: `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`,
+    };
+  });
+}
+
 }
