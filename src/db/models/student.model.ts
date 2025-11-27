@@ -16,7 +16,7 @@ export class Student extends Model<Student> {
   @Column({ type: DataType.DATE })
   dob: Date;
 
-  @Column({ type: DataType.ENUM('male','female','other') })
+  @Column({ type: DataType.ENUM('MALE','FEMALE','OTHER') })
   gender: string;
 
   @Column({ type: DataType.STRING })
@@ -37,7 +37,7 @@ export class Student extends Model<Student> {
   @Column({ type: DataType.TEXT })
   address: string;
 
-  @Column({ type: DataType.ENUM('active','inactive') })
+  @Column({ type: DataType.ENUM('ACTIVE','INACTIVE') })
   status: string;
 
   @HasMany(() => Parent)

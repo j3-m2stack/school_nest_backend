@@ -7,7 +7,7 @@ import {
   BelongsTo,
 } from 'sequelize-typescript';
 import { ClassMst } from './class.model';
-import { User } from 'src/database/models/user.model';
+import { User } from './user.model';
 
 @Table({ tableName: 'sections', timestamps: true })
 export class Section extends Model<Section> {

@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export enum AdminUserRole {
-  STAFF = 'staff',
-  TEACHER = 'teacher',
-  ADMIN = 'admin',
+  STAFF = 'STAFF',
+  TEACHER = 'TEACHER',
+  ADMIN = 'ADMIN',
 }
 
 export const AdminUserRoleEnum = Object.values(AdminUserRole);

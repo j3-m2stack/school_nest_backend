@@ -25,10 +25,8 @@ export async function paginatedFind({
   return {
     page,
     limit,
-    sortBy,
-    sortOrder,
     total: count,
     totalPages: Math.ceil(count / limit),
-    data: rows,
+    list: rows,
   };
 }

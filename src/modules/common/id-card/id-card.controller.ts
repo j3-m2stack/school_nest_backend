@@ -14,8 +14,8 @@ import {
 
 @ApiTags('ID Cards')
 @ApiBearerAuth()
-@Roles(AdminUserRole.ADMIN, AdminUserRole.STAFF)
-@UseGuards(AuthGuard('jwt'), RolesGuard)
+// @Roles(AdminUserRole.ADMIN, AdminUserRole.STAFF)
+// @UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller('id-card')
 export class IdCardController {
   constructor(private readonly idCardService: IdCardService) {}

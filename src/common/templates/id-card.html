@@ -1,138 +1,155 @@
 <!DOCTYPE html>
+
 <html>
 
 <head>
   <meta charset="UTF-8" />
+  <title>Student ID Cards</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
-      padding: 20px;
+      padding: 0;
       background: #f5f5f5;
     }
 
-    .grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-    }
 
-    .id-card {
-      width: 48%;
-      height: 260px;
-      border: 2px solid #b71c1c;
-      background: #fff;
-      padding: 10px 15px;
-      box-sizing: border-box;
-      position: relative;
-      border-radius: 6px;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
-    }
+/* Container for cards (6 per page) */
+.page {
+  width: 100%;
+  display: block;
+  page-break-after: always;
+}
 
-    .header {
-      background: #d32f2f;
-      color: #fff;
-      text-align: center;
-      padding: 6px;
-      font-size: 18px;
-      font-weight: bold;
-      letter-spacing: 1px;
-      border-radius: 4px;
-    }
+.id-card {
+  width: 45%;
+  float: left;
+  height: 250px;
+  border: 2px solid #b71c1c;
+  background: #fff;
+  padding: 10px 15px;
+  margin: 1%;
+  border-radius: 6px;
+  box-sizing: border-box;
+  position: relative;
+}
 
-    .school-subtitle {
-      text-align: center;
-      font-size: 12px;
-      margin-top: 2px;
-      color: #444;
-    }
+/* Logo */
+.logo {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 60px;
+}
 
-    .session {
-      background: #ffeb3b;
-      width: fit-content;
-      padding: 2px 10px;
-      font-weight: bold;
-      margin: 8px auto;
-      font-size: 12px;
-      border-radius: 3px;
-    }
+.header {
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  background: #d32f2f;
+  color: #fff;
+  padding: 6px;
+  border-radius: 4px;
+  margin-top: 5px;
+}
 
-    .content {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }
+.school-subtitle {
+  text-align: center;
+  font-size: 11px;
+  margin-top: 3px;
+  color: #444;
+}
 
-    .details {
-      width: 65%;
-      font-size: 13px;
-      line-height: 18px;
-    }
+.session {
+  background: #ffeb3b;
+  width: fit-content;
+  padding: 2px 10px;
+  font-weight: bold;
+  margin: 8px auto;
+  font-size: 11px;
+  border-radius: 3px;
+}
 
-    .details b {
-      color: #b71c1c;
-    }
+.photo-box {
+  width: 90px;
+  height: 110px;
+  border: 1px solid #444;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #ddd;
+  float: left;
+  margin-right: 10px;
+}
 
-    .photo-box {
-      width: 90px;
-      height: 110px;
-      border: 1px solid #444;
-      overflow: hidden;
-      border-radius: 4px;
-    }
+.photo-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
-    .photo-box img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+.details {
+  font-size: 12px;
+  line-height: 18px;
+}
 
-    .principal {
-      position: absolute;
-      bottom: 8px;
-      right: 15px;
-      font-size: 12px;
-      font-weight: bold;
-      color: #000;
-    }
+.label {
+  font-weight: bold;
+  margin: 0;
+}
 
-    .logo {
-      position: absolute;
-      top: 8px;
-      left: 8px;
-      width: 55px;
-    }
+.details b {
+  color: #b71c1c;
+}
+
+.principal {
+  position: absolute;
+  bottom: 5px;
+  right: 15px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #000;
+}
+
+/* Clear floats */
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
   </style>
 </head>
 
 <body>
-  <div class="grid">
+  <div class="page clearfix">
     {{#each students}}
     <div class="id-card">
-      <img src="/mnt/data/school-identity-card-2189374354-p0q1vv6k.webp" class="logo" />
+      <!-- SCHOOL LOGO -->
+      <img src="http://localhost:3001/assets/school-logo.png" class="logo" alt="School Logo" />
 
-      <div class="header">DAV PUBLIC SCHOOL</div>
-      <div class="school-subtitle">SECTOR-13, KARNAL (HARYANA)</div>
-      <div class="session">SESSION : {{session}}</div>
 
-      <div class="content">
-        <div class="details">
-          <p><b>Name:</b> {{firstName}} {{lastName}}</p>
-          <p><b>Class:</b> {{className}} - {{section}}</p>
-          <p><b>Father:</b> {{fatherName}}</p>
-          <p><b>Adm No:</b> {{admissionNo}}</p>
-          <p><b>DOB:</b> {{dob}}</p>
-          <p><b>Mobile:</b> {{phone}}</p>
-        </div>
+  <div class="header">DAV PUBLIC SCHOOL</div>
+  <div class="school-subtitle">SECTOR-13, KARNAL (HARYANA)</div>
+  <div class="session">SESSION : {{session}}</div>
 
-        <div class="photo-box">
-          <img src="{{photo}}" alt="Photo" />
-        </div>
-      </div>
+  <div class="photo-box">
+    <img src="{{photo}}" alt="Student Photo" />
+  </div>
 
-      <div class="principal">PRINCIPAL</div>
-    </div>
-    {{/each}}
+  <div class="details">
+    <p class="label"><b>Name:</b> {{firstName}} {{lastName}}</p>
+    <p class="label"><b>Class:</b> {{className}} - {{section}}</p>
+    <p class="label"><b>Father:</b> {{fatherName}}</p>
+    <p class="label"><b>Adm No:</b> {{admissionNo}}</p>
+    <p class="label"><b>DOB:</b> {{dob}}</p>
+    <p class="label"><b>Mobile:</b> {{phone}}</p>
+  </div>
+
+  <div class="principal">PRINCIPAL</div>
+</div>
+{{/each}}
+
+
   </div>
 </body>
 

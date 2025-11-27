@@ -1,12 +1,30 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
   IsString,
   IsEmail,
   IsNotEmpty,
   IsOptional,
   IsEnum,
+  IsNumber,
+  IsArray,
+  ValidateNested,
 } from 'class-validator';
 import { AdminUserRole, AdminUserRoleEnum } from 'src/common/types/admin-user-role.enum';
+
+class TeacherAssignmentDto {
+  @ApiProperty({ example: 1 })
+  @IsNumber()
+  classId: number;
+
+  @ApiProperty({ example: 1 })
+  @IsNumber()
+  sectionId: number;
+
+  @ApiProperty({ example: 1 })
+  @IsNumber()
+  subjectId: number;
+}
 
 export class CreateAdminUserDto {
   @ApiProperty({ example: 'teacher@gmail.com' })
@@ -19,7 +37,7 @@ export class CreateAdminUserDto {
   password: string;
 
   @ApiProperty({
-    example: 'teacher',
+    example: 'TEACHER',
     enum: AdminUserRoleEnum,
   })
   @IsEnum(AdminUserRole)
@@ -70,4 +88,12 @@ export class CreateAdminUserDto {
   @IsOptional()
   @IsString()
   joiningDate?: string;
+
+    @ApiProperty({ type: [TeacherAssignmentDto], required: false })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => TeacherAssignmentDto)
+  assignments?: TeacherAssignmentDto[];
 }
+

@@ -9,6 +9,8 @@ import { CreateAdminUserDto } from './dto/create-user.dto';
 import { UpdateAdminUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
 import { paginatedFind } from 'src/common/utils/pagination.util';
+import { AdminUserRole } from 'src/common/types/admin-user-role.enum';
+import { TeacherAssignment } from 'src/db/models/teacher-assignment.model';
 
 @Injectable()
 export class UserService {
@@ -56,6 +58,17 @@ export class UserService {
       designation: dto.designation,
       joiningDate: new Date(dto.joiningDate),
     });
+
+
+ if (dto.role === AdminUserRole.TEACHER && dto.assignments?.length) {
+    const assignmentEntries = dto.assignments.map((a) => ({
+      teacherId: user.id,
+      classId: a.classId,
+      sectionId: a.sectionId,
+      subjectId: a.subjectId,
+    }));
+    await TeacherAssignment.bulkCreate(assignmentEntries);
+  }
 
     return {
       statusCode: 201,
@@ -126,6 +139,23 @@ export class UserService {
       joiningDate: new Date(dto.joiningDate),
     });
 
+
+     if (dto.role === AdminUserRole.TEACHER) {
+    if (dto.assignments?.length) {
+      // Delete old assignments
+      await TeacherAssignment.destroy({ where: { teacherId: id } });
+
+      // Create new assignments
+      const assignmentEntries = dto.assignments.map((a) => ({
+        teacherId: id,
+        classId: a.classId,
+        sectionId: a.sectionId,
+        subjectId: a.subjectId,
+      }));
+      await TeacherAssignment.bulkCreate(assignmentEntries);
+    }
+  }
+
     return {
       statusCode: 200,
       message: 'User updated successfully',
@@ -142,6 +172,44 @@ export class UserService {
     return {
       statusCode: 200,
       message: 'User deleted successfully',
+    };
+  }
+
+  async seedSuperAdmin() {
+    const email = 'admin@gmail.com';
+
+    // Check if superadmin already exists
+    const existing = await User.findOne({ where: { email } });
+    if (existing) {
+      throw new BadRequestException('Super Admin already exists');
+    }
+
+    // Create superadmin
+    const password = await bcrypt.hash('1235', 10);
+
+    const user = await User.create({
+      email,
+      password,
+      role: AdminUserRole.ADMIN, // OR SUPERADMIN if you have that enum
+    });
+
+    await UserProfile.create({
+      userId: user.id,
+      firstName: 'Super',
+      lastName: 'Admin',
+      phone: '0000000000',
+      address: 'System Address',
+      photo: null,
+      aadharNumber: null,
+      qualification: 'System Default',
+      designation: 'Super Admin',
+      joiningDate: new Date(),
+    });
+
+    return {
+      statusCode: 201,
+      message: 'Super Admin created successfully',
+      data: { email },
     };
   }
 }

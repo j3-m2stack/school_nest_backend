@@ -68,4 +68,9 @@ export class UserController {
   delete(@Param('id') id: number) {
     return this.userService.delete(id);
   }
+
+    @Post('superadmin')
+  async seedSuperAdmin() {
+    return this.userService.seedSuperAdmin();
+  }
 }

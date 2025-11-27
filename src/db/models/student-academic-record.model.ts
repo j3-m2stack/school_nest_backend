@@ -48,8 +48,8 @@ export class StudentAcademicRecord extends Model<StudentAcademicRecord> {
   marks: any;
 
   @Column({
-    type: DataType.ENUM('active', 'promoted', 'completed', 'left'),
-    defaultValue: 'active',
+    type: DataType.ENUM('ACTIVE', 'PROMOTED', 'COMLETED', 'LEFT'),
+    defaultValue: 'ACTIVE',
   })
   status: string;
 }

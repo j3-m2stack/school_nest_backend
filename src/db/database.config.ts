@@ -11,6 +11,9 @@ import { AcademicSession } from '../db/models/academic-session.model';
 import { AuditLog } from '../db/models/audit-log.model';
 import { Section } from '../db/models/section.model';
 import { Subject } from '../db/models/subject.model';
+import { StudentExamMarks } from './models/student-exam-marks.model';
+import { TeacherAssignment } from './models/teacher-assignment.model';
+import { ClassTeacherAssignment } from './models/class-teacher-assignment.model';
 export const sequelize = new Sequelize({
   database: process.env.DB_NAME,
   username: process.env.DB_USER,
@@ -29,6 +32,9 @@ export const sequelize = new Sequelize({
     AuditLog,
     Section,
     Subject,
+    StudentExamMarks,
+    TeacherAssignment,
+    ClassTeacherAssignment
   ],
   logging: true,
 });

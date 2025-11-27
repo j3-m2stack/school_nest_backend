@@ -12,7 +12,7 @@ export const databaseProviders = [
       }
       // await databaseConfig.sync({ force: true });
       // await sequelize.sync({ alter: true });
-      // await sequelize.sync();
+      await sequelize.sync();
       return sequelize;
     },
   },
