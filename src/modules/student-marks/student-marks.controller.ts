@@ -10,9 +10,9 @@ import { CreateStudentMarksDto } from './dto/create-student-mark.dto';
 
 @ApiTags('Student Marks Management ')
 @ApiBearerAuth()
-@Roles( AdminUserRole.TEACHER)
+@Roles( AdminUserRole.ADMIN)
 @UseGuards(AuthGuard('jwt'), RolesGuard)
-@Controller('teacher/marks')
+@Controller('marks')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 export class StudentMarksController {
   constructor(private readonly service: StudentMarksService) {}

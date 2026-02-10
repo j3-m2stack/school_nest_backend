@@ -13,6 +13,10 @@ import { Student } from './student.model';
 
 @Table({ tableName: 'student_academic_records', timestamps: true })
 export class StudentAcademicRecord extends Model<StudentAcademicRecord> {
+
+  @Column({ type: DataType.INTEGER, autoIncrement: true, primaryKey: true })
+  id: number;
+
   @ForeignKey(() => Student)
   @Column({ type: DataType.INTEGER })
   studentId: number;

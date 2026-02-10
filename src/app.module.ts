@@ -6,10 +6,11 @@ import { AuthModule } from './modules/auth/auth.module';
 import { DatabaseModule } from './db/database.module';
 import { StaffModule } from './modules/staff/staff.module';
 import { CommonModule } from './modules/common/common.module';
-import { TeachersModule } from './modules/teachers/teachers.module';
+import { StudentMarksModule } from './modules/student-marks/student-marks.module';
+import { AttendanceModule } from './modules/attendance/attendance.module';
 
 @Module({
-  imports: [DatabaseModule, AdminModule, AuthModule, StaffModule, CommonModule,TeachersModule],
+  imports: [DatabaseModule, AdminModule, AuthModule, StaffModule, CommonModule,StudentMarksModule,AttendanceModule],
   controllers: [AppController],
   providers: [AppService],
 })

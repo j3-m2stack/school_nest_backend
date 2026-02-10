@@ -9,6 +9,8 @@ import { Section } from 'src/db/models/section.model';
 import { paginatedFind } from 'src/common/utils/pagination.util';
 import { CreateClassDto } from './dto/create-class-management.dto';
 import { UpdateClassDto } from './dto/update-class-management.dto';
+import { ClassSubject } from 'src/db/models/class-subjects.model';
+import { Subject } from 'src/db/models/subject.model';
 
 @Injectable()
 export class ClassManagementService {
@@ -17,34 +19,56 @@ export class ClassManagementService {
   // ------------------------------------------------------
   // CREATE CLASS WITH SECTIONS + CLASS TEACHER
   // ------------------------------------------------------
-  async create(dto: CreateClassDto) {
-    // Check duplicate class name
-    const exists = await ClassMst.findOne({ where: { name: dto.name } });
-    if (exists) throw new BadRequestException('Class already exists');
+async create(dto: CreateClassDto) {
+  // Check duplicate class name
+  const exists = await ClassMst.findOne({ where: { name: dto.name } });
+  if (exists) throw new BadRequestException('Class already exists');
 
-    // Create the class
-    const createdClass = await ClassMst.create({
-      name: dto.name,
-      description: dto.description ?? null,
+  // Validate subjects
+  if (dto.subjectIds?.length) {
+    const subjectCount = await Subject.count({
+      where: { id: dto.subjectIds },
     });
 
-    // Create sections with optional teacher
-    if (dto.sections?.length > 0) {
-      const sectionEntries = dto.sections.map((sec) => ({
-        name: sec.name,
-        classId: createdClass.id,
-        classTeacherId: sec.classTeacherId || null,
-      }));
-
-      await Section.bulkCreate(sectionEntries);
+    if (subjectCount !== dto.subjectIds.length) {
+      throw new BadRequestException('One or more subjectIds are invalid');
     }
-
-    return {
-      statusCode: 201,
-      message: 'Class created successfully with section teachers',
-      data: createdClass,
-    };
   }
+
+  // Create class
+  const createdClass = await ClassMst.create({
+    name: dto.name,
+    description: dto.description ?? null,
+  });
+
+  // Create sections
+  if (dto.sections?.length > 0) {
+    const sectionEntries = dto.sections.map((sec) => ({
+      name: sec.name,
+      classId: createdClass.id,
+      classTeacherId: sec.classTeacherId || null,
+    }));
+
+    await Section.bulkCreate(sectionEntries);
+  }
+
+  // ✅ Assign subjects to class
+  if (dto.subjectIds?.length) {
+    const classSubjects = dto.subjectIds.map((subjectId) => ({
+      classId: createdClass.id,
+      subjectId,
+    }));
+
+    await ClassSubject.bulkCreate(classSubjects);
+  }
+
+  return {
+    statusCode: 201,
+    message: 'Class created successfully with sections and subjects',
+    data: createdClass,
+  };
+}
+
 
   // ------------------------------------------------------
   // FIND ALL CLASSES
@@ -74,27 +98,32 @@ export class ClassManagementService {
   // ------------------------------------------------------
   // UPDATE CLASS + SECTIONS + CLASS TEACHER
   // ------------------------------------------------------
-  async update(id: number, dto: UpdateClassDto) {
-    const classData = await this.findOne(id);
+async update(id: number, dto: UpdateClassDto) {
+  const classData = await this.findOne(id);
 
-    // check for duplicate name
-    if (dto.name && dto.name !== classData.name) {
-      const exists = await ClassMst.findOne({ where: { name: dto.name } });
-      if (exists) throw new BadRequestException('Class name already exists');
-    }
+  // ----------------------------------
+  // Check duplicate class name
+  // ----------------------------------
+  if (dto.name && dto.name !== classData.name) {
+    const exists = await ClassMst.findOne({ where: { name: dto.name } });
+    if (exists) throw new BadRequestException('Class name already exists');
+  }
 
-    // update class fields
-    await classData.update({
-      name: dto.name,
-      description: dto.description ?? classData.description,
-    });
+  // ----------------------------------
+  // Update class fields
+  // ----------------------------------
+  await classData.update({
+    name: dto.name ?? classData.name,
+    description: dto.description ?? classData.description,
+  });
 
-    // update sections
-    if (dto.sections?.length) {
-      // delete old sections
-      await Section.destroy({ where: { classId: id } });
+  // ----------------------------------
+  // Update sections (ONLY if provided)
+  // ----------------------------------
+  if (Array.isArray(dto.sections)) {
+    await Section.destroy({ where: { classId: id } });
 
-      // create new sections with classTeacherId
+    if (dto.sections.length > 0) {
       const sectionEntries = dto.sections.map((sec) => ({
         name: sec.name,
         classId: id,
@@ -103,13 +132,44 @@ export class ClassManagementService {
 
       await Section.bulkCreate(sectionEntries);
     }
-
-    return {
-      statusCode: 200,
-      message: 'Class updated successfully',
-      data: classData,
-    };
   }
+
+  // ----------------------------------
+  // Update subjects (ONLY if provided)
+  // ----------------------------------
+  if (Array.isArray(dto.subjectIds)) {
+    // Validate subject IDs
+    if (dto.subjectIds.length > 0) {
+      const subjectCount = await Subject.count({
+        where: { id: dto.subjectIds },
+      });
+
+      if (subjectCount !== dto.subjectIds.length) {
+        throw new BadRequestException('One or more subjectIds are invalid');
+      }
+    }
+
+    // Remove old subject mappings
+    await ClassSubject.destroy({ where: { classId: id } });
+
+    // Create new mappings
+    if (dto.subjectIds.length > 0) {
+      const classSubjects = dto.subjectIds.map((subjectId) => ({
+        classId: id,
+        subjectId,
+      }));
+
+      await ClassSubject.bulkCreate(classSubjects);
+    }
+  }
+
+  return {
+    statusCode: 200,
+    message: 'Class updated successfully',
+    data: classData,
+  };
+}
+
 
   // ------------------------------------------------------
   // DELETE CLASS

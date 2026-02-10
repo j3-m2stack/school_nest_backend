@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Term 1 Report Card</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #ffffff;
+      margin: 0;
+      padding: 0;
+      color: #000;
+    }
+
+    .page {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #333;
+      page-break-after: always;
+    }
+
+    /* School Header */
+    .school-header {
+      text-align: center;
+      border-bottom: 2px solid #c62828;
+      padding-bottom: 6px;
+    }
+
+    .school-header h2 {
+      margin: 0;
+      color: #c62828;
+      font-size: 20px;
+    }
+
+    .school-header p {
+      margin: 2px 0;
+      font-size: 12px;
+    }
+
+    .term-title {
+      text-align: center;
+      margin: 10px 0;
+      font-weight: bold;
+      font-size: 14px;
+      background: #e3f2fd;
+      padding: 5px;
+      border: 1px solid #90caf9;
+    }
+
+    /* Info Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    th, td {
+      border: 1px solid #333;
+      padding: 5px;
+      text-align: center;
+    }
+
+    th {
+      background: #bbdefb;
+      font-weight: bold;
+    }
+
+    .label {
+      background: #f5f5f5;
+      font-weight: bold;
+      text-align: left;
+    }
+
+    /* Marks table */
+    .marks th {
+      background: #1976d2;
+      color: #fff;
+    }
+
+    .subject {
+      text-align: left;
+      font-weight: bold;
+    }
+
+    .remark {
+      background: #e8f5e9;
+      font-weight: bold;
+      color: #2e7d32;
+    }
+
+    /* Summary */
+    .summary {
+      margin-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    /* Grading */
+    .grading {
+      margin-top: 10px;
+    }
+
+    .grading th {
+      background: #fff3e0;
+    }
+
+    /* Signatures */
+    .signatures {
+      margin-top: 25px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+
+    .sign {
+      width: 30%;
+      text-align: center;
+      border-top: 1px solid #000;
+      padding-top: 4px;
+    }
+  </style>
+</head>
+
+<body>
+
+{{#each students}}
+<div class="page">
+
+  <!-- Header -->
+  <div class="school-header">
+    <h2>{{this.schoolName}}</h2>
+    <p>{{this.schoolAddress}}</p>
+    <p>Phone: {{this.schoolPhone}} | Email: {{this.schoolEmail}}</p>
+  </div>
+
+  <div class="term-title">
+    Term - 1 Report Card<br />
+    Academic Year {{this.session}}
+  </div>
+
+  <!-- Student Info -->
+  <table>
+    <tr>
+      <td class="label">Roll No</td>
+      <td>{{this.rollNo}}</td>
+      <td class="label">Class & Div</td>
+      <td>{{this.className}} - {{this.section}}</td>
+      <td class="label">Attendance</td>
+      <td>{{this.attendance}}</td>
+    </tr>
+    <tr>
+      <td class="label">Student Name</td>
+      <td colspan="3">{{this.studentName}}</td>
+      <td class="label">GR No</td>
+      <td>{{this.grNo}}</td>
+    </tr>
+  </table>
+
+  <!-- Marks -->
+  <table class="marks" style="margin-top:10px;">
+    <thead>
+      <tr>
+        <th>Sr</th>
+        <th>Subject</th>
+        <th>Total Marks</th>
+        <th>Marks Obtained</th>
+        <th>Grade</th>
+        <th>Remarks</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each this.marks}}
+      <tr>
+        <td>{{@index}}</td>
+        <td class="subject">{{this.subjectName}}</td>
+        <td>{{this.totalMarks}}</td>
+        <td>{{this.marksObtained}}</td>
+        <td>{{this.grade}}</td>
+        <td class="remark">Outstanding</td>
+      </tr>
+      {{/each}}
+      <tr>
+        <td colspan="2"><strong>Total</strong></td>
+        <td>{{this.totalMarks}}</td>
+        <td>{{this.totalObtained}}</td>
+        <td colspan="2"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Summary -->
+  <div class="summary">
+    <div>Rank: {{this.rank}}</div>
+    <div>Grade: {{this.finalGrade}}</div>
+    <div>Overall Percentage: {{this.percentage}}%</div>
+  </div>
+
+  <!-- Grading System -->
+  <table class="grading">
+    <tr>
+      <th colspan="6">Grading System</th>
+    </tr>
+    <tr>
+      <td>46 - 50</td><td>41 - 45</td><td>36 - 40</td>
+      <td>31 - 35</td><td>18 - 30</td><td>0 - 17</td>
+    </tr>
+    <tr>
+      <td>A+</td><td>A</td><td>B+</td><td>B</td><td>C</td><td>Fail</td>
+    </tr>
+  </table>
+
+  <!-- Signatures -->
+  <div class="signatures">
+    <div class="sign">Class Teacher</div>
+    <div class="sign">Principal</div>
+    <div class="sign">Parents</div>
+  </div>
+
+</div>
+{{/each}}
+
+</body>
+</html>

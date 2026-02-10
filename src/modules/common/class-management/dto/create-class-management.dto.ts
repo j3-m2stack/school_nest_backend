@@ -31,4 +31,13 @@ export class CreateClassDto {
   @ValidateNested({ each: true })
   @Type(() => SectionDto)
   sections: SectionDto[];
+
+    @ApiProperty({
+    type: [Number],
+    description: 'List of subject IDs for this class',
+    example: [1, 2, 3],
+  })
+  @IsArray()
+  @IsNumber({}, { each: true })
+  subjectIds: number[];
 }

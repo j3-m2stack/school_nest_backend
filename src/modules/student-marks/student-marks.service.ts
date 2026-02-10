@@ -4,16 +4,17 @@ import { StudentExamMarks } from 'src/db/models/student-exam-marks.model';
 import { StudentAcademicRecord } from 'src/db/models/student-academic-record.model';
 import { TeacherAssignment } from 'src/db/models/teacher-assignment.model';
 import { CreateStudentMarksDto } from './dto/create-student-mark.dto';
+import { AcademicSession } from 'src/db/models/academic-session.model';
 
 @Injectable()
 export class StudentMarksService {
- async addOrUpdateMarks(dto: CreateStudentMarksDto, user: any) {
+  async addOrUpdateMarks(dto: CreateStudentMarksDto, user: any) {
     const academicRecord = await StudentAcademicRecord.findByPk(dto.studentAcademicRecordId);
     if (!academicRecord) throw new NotFoundException('Student academic record not found');
 
     // Get teacher assignments
     const assignments = await TeacherAssignment.findAll({
-      where: { 
+      where: {
         teacherId: user.id,
         classId: academicRecord.classId,
         sectionId: academicRecord.sectionId,
@@ -55,7 +56,19 @@ export class StudentMarksService {
   }
 
   async getMarksByStudent(studentAcademicRecordId: number) {
-    return StudentExamMarks.findAll({ where: { studentAcademicRecordId } });
+    return StudentExamMarks.findAll({
+      where: { studentAcademicRecordId },
+      include: [
+        {
+          model: StudentAcademicRecord,
+          attributes: ['sessionId'],
+          include: [
+            {
+              model: AcademicSession,
+              attributes: ['name']
+            }]
+        }]
+    });
   }
 
   async getMarksByClass(classId: number, examType?: string) {

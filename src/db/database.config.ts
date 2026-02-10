@@ -14,6 +14,7 @@ import { Subject } from '../db/models/subject.model';
 import { StudentExamMarks } from './models/student-exam-marks.model';
 import { TeacherAssignment } from './models/teacher-assignment.model';
 import { ClassTeacherAssignment } from './models/class-teacher-assignment.model';
+import { ClassSubject } from './models/class-subjects.model';
 export const sequelize = new Sequelize({
   database: process.env.DB_NAME,
   username: process.env.DB_USER,
@@ -34,7 +35,8 @@ export const sequelize = new Sequelize({
     Subject,
     StudentExamMarks,
     TeacherAssignment,
-    ClassTeacherAssignment
+    ClassTeacherAssignment,
+    ClassSubject
   ],
   logging: true,
 });
