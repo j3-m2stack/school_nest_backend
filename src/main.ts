@@ -8,6 +8,9 @@ import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.setGlobalPrefix('api', {
+    exclude: ['/'],
+  });
 
   app.useGlobalPipes(new ValidationPipe({ }));
 
@@ -15,6 +18,18 @@ async function bootstrap() {
     prefix: '/assets/',
   });
   
+app.enableCors({
+  origin: [
+    'http://localhost:3000', // Next.js
+    'http://localhost:4200', // Angular
+    'http://localhost:5173', // Vite
+  ],
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  allowedHeaders: 'Content-Type, Accept, Authorization',
+});
+
+
   // ⭐ Swagger Config
   const config = new DocumentBuilder()
     .setTitle('School Management API')

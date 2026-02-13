@@ -15,6 +15,9 @@ import { StudentExamMarks } from './models/student-exam-marks.model';
 import { TeacherAssignment } from './models/teacher-assignment.model';
 import { ClassTeacherAssignment } from './models/class-teacher-assignment.model';
 import { ClassSubject } from './models/class-subjects.model';
+import { FeePayment } from './models/fee-payment.model';
+import { FeeStructure } from './models/fee-structure.model';
+import { StudentFee } from './models/student-fee.model';
 export const sequelize = new Sequelize({
   database: process.env.DB_NAME,
   username: process.env.DB_USER,
@@ -36,7 +39,10 @@ export const sequelize = new Sequelize({
     StudentExamMarks,
     TeacherAssignment,
     ClassTeacherAssignment,
-    ClassSubject
+    ClassSubject,
+    FeePayment,
+    FeeStructure,
+    StudentFee
   ],
   logging: true,
 });

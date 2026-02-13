@@ -8,6 +8,7 @@ import { StudentAcademicRecord } from 'src/db/models/student-academic-record.mod
 import { FilterStudentDto } from './dto/filter-student.dto';
 import { Section } from 'src/db/models/section.model';
 import { ClassMst } from 'src/db/models/class.model';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class PublicService {
@@ -58,6 +59,35 @@ async findOne(id: number) {
     return {
       statusCode: 200,
       message: 'Students found successfully',
+      data: students,
+    };
+  }
+
+  async searchStudent(name: string, fatherName: string) {
+    const students = await Student.findAll({
+      where: {
+        firstName: {
+          [Op.like]: `%${name}%`,
+        },
+      },
+      include: [
+        {
+          model: Parent,
+          where: fatherName
+            ? {
+                name: {
+                  [Op.like]: `%${fatherName}%`,
+                },
+                relation: 'FATHER',
+              }
+            : undefined,
+        },
+      ],
+    });
+
+    return {
+      statusCode: 200,
+      message: 'Student search result',
       data: students,
     };
   }

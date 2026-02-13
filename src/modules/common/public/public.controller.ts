@@ -20,4 +20,13 @@ export class PublicController {
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.publicService.findOne(id);
   }
+
+    @Get('search')
+  @ApiOperation({ summary: 'Search student by name and father name' })
+  searchStudent(
+    @Query('name') name: string,
+    @Query('fatherName') fatherName: string,
+  ) {
+    return this.publicService.searchStudent(name, fatherName);
+  }
 }

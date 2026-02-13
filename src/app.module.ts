@@ -8,9 +8,10 @@ import { StaffModule } from './modules/staff/staff.module';
 import { CommonModule } from './modules/common/common.module';
 import { StudentMarksModule } from './modules/student-marks/student-marks.module';
 import { AttendanceModule } from './modules/attendance/attendance.module';
+import { FeesModule } from './modules/fees/fees.module';
 
 @Module({
-  imports: [DatabaseModule, AdminModule, AuthModule, StaffModule, CommonModule,StudentMarksModule,AttendanceModule],
+  imports: [DatabaseModule, AdminModule, AuthModule, StaffModule, CommonModule,StudentMarksModule,AttendanceModule,FeesModule],
   controllers: [AppController],
   providers: [AppService],
 })
